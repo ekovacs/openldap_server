@@ -10,12 +10,12 @@ access to *
                 by self write
                 by dn.base="cn=Manager,dc={{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}" write
                 by * read
-access to attrs=userPassword
+access to attrs=userpassword
                 by self write
                 by anonymous auth
                 by dn.base="cn=Manager,dc={{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}" write
                 by * none
-access to attrs=shadowLastChange
+access to attrs=shadowlastchange
                 by self write
                 by * read
 

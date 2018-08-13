@@ -27,31 +27,25 @@
     owner: "{{ openldap_server_user }}"
     group: "{{ openldap_server_user }}"
 
-- name: copy the supporting files
-  copy: src=ldap dest=/etc/sysconfig/ldap mode=0755
-  when: openldap_server_enable_ssl and ansible_os_family == 'RedHat'
-  notify: 
-   - restart slapd
+- include: configure-subtasks/copy-supporting-files.yml
 
-
-- name: copy the supporting files
-  copy: src=slapd_fedora dest=/etc/sysconfig/slapd mode=0755
-  when: openldap_server_enable_ssl and ansible_distribution == "Fedora"
-  notify: 
-   - restart slapd
-
-- name: copy the supporting files
-  copy: src=slapd dest=/etc/default/slapd mode=0755
-  when: openldap_server_enable_ssl and ansible_os_family == 'Debian'
-  notify: 
-   - restart slapd
+- name: Patching config file for service on Debian
+  when: ansible_os_family == 'Debian'
+  ini_file:
+    no_extra_spaces: yes
+    path: /etc/default/slapd
+    section: null
+    option: SLAPD_CONF
+    value: /etc/ldap/slapd.conf
+    mode: 0700
+    backup: yes
 
 - name: start the slapd service
-  service: name=slapd state=started enabled=yes 
+  service: name=slapd state=restarted enabled=yes
   
 - name: Copy the template for creating base dn
   template: src={{ openldap_server_ldif }} dest=/tmp/
   register: result
 
 - name: add the base domain
-  shell: ldapadd -x -D "cn=Manager,dc={{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}" -w {{ openldap_server_rootpw }} -f {{ result.dest|default(result.path) }} && touch {{ openldap_server_app_path }}/rootdn_created creates={{ openldap_server_app_path }}/rootdn_created 
+  shell: ldapadd -x -D "cn=Manager,dc={{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}" -w {{ openldap_server_rootpw }} -f {{ result.dest|default(result.path) }} && touch {{ openldap_server_app_path }}/rootdn_created creates={{ openldap_server_app_path }}/rootdn_created
