@@ -1,18 +1,24 @@
 ---
-- name: copy the supporting files RedHat
-  copy: src=ldap dest=/etc/sysconfig/ldap mode=0755
+- name: copy the supporting files - RedHat
+  copy: src=ldap_redhat dest=/etc/sysconfig/ldap mode=0755
   when: openldap_server_enable_ssl and ansible_os_family == 'RedHat'
   notify:
    - restart slapd
 
-- name: copy the supporting files Fedora
+- name: copy the supporting files - Fedora
   copy: src=slapd_fedora dest=/etc/sysconfig/slapd mode=0755
   when: openldap_server_enable_ssl and ansible_distribution == "Fedora"
   notify:
    - restart slapd
 
-- name: copy the supporting files Ubuntu
-  copy: src=slapd dest=/etc/default/slapd mode=0755
+- name: copy the supporting files - Ubuntu
+  copy: src=slapd_debian dest=/etc/default/slapd mode=0755
   when: openldap_server_enable_ssl and ansible_os_family == 'Debian'
   notify:
    - restart slapd
+
+- name: copy the supporting files - Suse
+  copy: src=openldap_suse dest=/etc/sysconfig/openldap mode=0644
+  when: openldap_server_enable_ssl and ansible_os_family == 'Suse'
+  notify:
+    - restart slapd

@@ -1,0 +1,18 @@
+---
+- name: Install the openldap and required packages for RedHat
+  yum: name={{ item }} state=present
+  with_items: "{{ openldap_server_pkgs }}"
+  when: ansible_os_family == 'RedHat'
+
+
+- name: Install the openldap and required packages for Ubuntu
+  apt: name={{ item }} state=present update_cache=yes
+  with_items: "{{ openldap_server_pkgs }}"
+  environment: env
+  when: ansible_os_family == 'Debian'
+
+- name: Install the openldap and required packages for SLES
+  zypper: name={{ item }} state=present update_cache=yes
+  with_items: "{{ openldap_server_pkgs }}"
+  environment: env
+  when: ansible_os_family == 'Suse'

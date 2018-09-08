@@ -1,7 +1,8 @@
 ---
 
-#The domain prefix for ldap
-openldap_server_domain_name: example.com
+#The domain and tld prefix for ldap
+openldap_server_domain_name: example
+openldap_server_domain_tld: com
 
 #This is the password for admin for openldap 
 openldap_server_rootpw: passme
@@ -11,8 +12,31 @@ openldap_server_country: US
 openldap_server_state: oregon
 openldap_server_location: portland
 openldap_server_organization: IT
-
 openldap_server_enable_ssl: true
+openldap_server_ldif: domain.ldif
+
+ldap_auth:
+  server_uri: ldap://localhost/
+  bind_dn: cn=Manager,dc={{ openldap_server_domain_name }},dc={{ openldap_server_domain_tld }}
+  bind_pw: "{{ openldap_server_rootpw }}"
 
 #The ldif file
-openldap_server_ldif: domain.ldif
+
+users:
+  - admin
+  - user1
+  - user2
+  - user3
+  - user4
+
+ldap_groups:
+  - name: allUsers
+    members:
+      - admin
+      - user1
+      - user2
+      - user3
+      - user4
+  - name: admins
+    members:
+      - admin

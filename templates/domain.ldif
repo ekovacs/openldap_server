@@ -1,4 +1,7 @@
-dn: dc={{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}
-objectClass: domain
-dc: {{ openldap_server_domain_name.split('.')[0] }}
+dn: dc={{ openldap_server_domain_name }},dc={{ openldap_server_domain_tld }}
+objectClass: dcObject
+objectClass: organization
+dc: {{ openldap_server_domain_name }}
+o: {{ openldap_server_domain_name }}
+
 

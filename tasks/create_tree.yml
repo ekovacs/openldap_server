@@ -1,0 +1,56 @@
+---
+
+- name: Creating Organizational Units
+  ldap_entry:
+    state: present
+    params: "{{ ldap_auth }}"
+    dn: ou={{ item }},dc={{ openldap_server_domain_name }},dc={{ openldap_server_domain_tld }}
+    objectClass:
+      - organizationalUnit
+    attributes:
+      ou: "{{ item }}"
+  loop:
+    - Users
+    - Groups
+
+- name: Add Users
+  ldap_entry:
+    params: "{{ ldap_auth }}"
+    state: present
+    dn: uid={{ item }},ou=Users,dc={{ openldap_server_domain_name }},dc={{ openldap_server_domain_tld }}
+    objectClass:
+      - inetOrgPerson
+      - top
+    attributes:
+      cn: "{{ item }}"
+      sn: "{{ item }}"
+      uid: "{{ item }}"
+      userPassword: "{{ item }}"
+  loop: "{{ users }}"
+
+- name: Add Groups
+  ldap_entry:
+    params: "{{ ldap_auth }}"
+    state: present
+    dn: uid={{ item.name }},ou=Groups,dc={{ openldap_server_domain_name }},dc={{ openldap_server_domain_tld }}
+    objectClass:
+      - extensibleObject
+      - groupOfNames
+      - top
+    attributes:
+      ou: Groups
+      cn: "{{ item.name }}"
+      sn: "{{ item.name }}"
+      uid: "{{ item.name }}"
+      member: uid={{ item.members[0] }},ou=Users,dc={{ openldap_server_domain_name }},dc={{ openldap_server_domain_tld }}
+  loop: "{{ ldap_groups }}"
+
+- name: Add members to groups
+  ldap_attr:
+    bind_dn: cn=Manager,dc=example,dc=com
+    bind_pw: my-secret-pass
+    state: present
+    dn: uid={{ item.0.name }},ou=Groups,dc={{ openldap_server_domain_name }},dc={{ openldap_server_domain_tld }}
+    name: member
+    values: uid={{ item.1 }},ou=Users,dc={{ openldap_server_domain_name }},dc={{ openldap_server_domain_tld }}
+  loop: "{{ ldap_groups|subelements('members') }}"

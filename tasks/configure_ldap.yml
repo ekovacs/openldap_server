@@ -1,7 +1,11 @@
 ---
 
 - name: Create the directory for ldap database
-  file: path=/var/lib/ldap/{{ openldap_server_domain_name }}/ state=directory owner={{ openldap_server_user }} group={{ openldap_server_user }}
+  file: path=/var/lib/ldap/{{ openldap_server_domain_name }}.{{ openldap_server_domain_tld }}/ state=directory owner={{ openldap_server_user }} group={{ openldap_server_user }}
+
+- name: Create pid dir for Suse
+  file: path=/var/run/openldap/ state=directory owner={{ openldap_server_user }} group={{ openldap_server_user }}
+  when: ansible_os_family == 'Suse'
 
 - name: Create the directory for ldap certificates
   file: path={{ openldap_server_app_path }}/certs/ state=directory owner={{ openldap_server_user }} group={{ openldap_server_user }}
@@ -48,4 +52,4 @@
   register: result
 
 - name: add the base domain
-  shell: ldapadd -x -D "cn=Manager,dc={{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}" -w {{ openldap_server_rootpw }} -f {{ result.dest|default(result.path) }} && touch {{ openldap_server_app_path }}/rootdn_created creates={{ openldap_server_app_path }}/rootdn_created
+  shell: ldapadd -x -D "cn=Manager,dc={{ openldap_server_domain_name }},dc={{ openldap_server_domain_tld }}" -w {{ openldap_server_rootpw }} -f {{ result.dest|default(result.path) }} && touch {{ openldap_server_app_path }}/rootdn_created creates={{ openldap_server_app_path }}/rootdn_created
