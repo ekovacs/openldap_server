@@ -1,6 +1,6 @@
 ---
 - name: copy the supporting files - RedHat
-  copy: src=ldap_redhat dest=/etc/sysconfig/ldap mode=0755
+  copy: src=ldap_redhat dest=/etc/sysconfig/slapd mode=0755
   when: openldap_server_enable_ssl and ansible_os_family == 'RedHat'
   notify:
    - restart slapd

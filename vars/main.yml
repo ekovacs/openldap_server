@@ -2,3 +2,13 @@
 
 env:
  RUNLEVEL: 1
+
+
+ldap_server_uri:
+  secure: "ldaps://localhost/"
+  unsecure: "ldap://localhost/"
+
+ldap_auth:
+  server_uri: "{{ ldap_server_uri.secure if  openldap_server_enable_ssl  else  ldap_server_uri.unsecure }}"
+  bind_dn: cn=Manager,dc={{ openldap_server_domain_name }},dc={{ openldap_server_domain_tld }}
+  bind_pw: "{{ openldap_server_rootpw }}"
