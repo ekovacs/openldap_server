@@ -26,50 +26,54 @@ them are as follows:
     openldap_server_organization: IT
 
 The initial user and group mappings in the following format:
-    users:
+```
+users:
+  - admin
+  - user1
+  - user2
+
+ldap_groups:
+  - name: allUsers
+    members:
       - admin
       - user1
       - user2
-
-    ldap_groups:
-      - name: allUsers
-        members:
-          - admin
-          - user1
-          - user2
-      - name: admins
-        members:
-          - admin
-
+  - name: admins
+    members:
+      - admin
+```
 
 Examples
 --------
 
 1) Configure an OpenLDAP server without SSL:
-
-    - hosts: all
-      sudo: true
-      roles:
-      - role: bennojoy.openldap_server
-        openldap_server_domain_name: example
-        openldap_server_domain_tld: com
-        openldap_server_rootpw: passme
-        openldap_server_enable_ssl: false
-       
+```
+---
+- hosts: all
+  sudo: true
+  roles:
+  - role: bennojoy.openldap_server
+    openldap_server_domain_name: example
+    openldap_server_domain_tld: com
+    openldap_server_rootpw: passme
+    openldap_server_enable_ssl: false
+```
 2) Configure an OpenLDAP server with SSL:
-
-    - hosts: all
-      sudo: true
-      roles:
-      - role: bennojoy.openldap_server
-        openldap_server_domain_name: example
-        openldap_server_domain_tld: com
-        openldap_server_rootpw: passme
-        openldap_server_enable_ssl: true
-        openldap_server_country: US
-        openldap_server_state: Oregon
-        openldap_server_location: Portland
-        openldap_server_organization: IT
+```
+---
+- hosts: all
+  sudo: true
+  roles:
+  - role: bennojoy.openldap_server
+    openldap_server_domain_name: example
+    openldap_server_domain_tld: com
+    openldap_server_rootpw: passme
+    openldap_server_enable_ssl: true
+    openldap_server_country: US
+    openldap_server_state: Oregon
+    openldap_server_location: Portland
+    openldap_server_organization: IT
+```
 
 Dependencies
 ------------
@@ -89,5 +93,5 @@ Author Information
 
 Benno Joy
 
-Endre Zoltan Kovacs - added Suse support
+Endre Zoltan Kovacs - added Suse support, and various fixes
 
